@@ -4,6 +4,7 @@ import cookies from "cookie-parser";
 import pool from "../config/bd.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import protect from "../middleware/authMiddleware.js";
 
 dotenv.config();
 const router = express.Router();
@@ -86,13 +87,13 @@ router.post("/login", async (req, res) => {
     }
 });
 // Logout user
-router.post("/logout", (req, res) => {
+router.post("/logout", protect, (req, res) => {
     res.clearCookie("token", cookiesOptions);
     return res.status(200).json({ message: "User logged out successfully" });
 });
 
 // Get user profile
-router.get("/profile", async (req, res) => {
+router.get("/profile", protect, async (req, res) => {
     const token = req.cookies.token;
     if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -107,7 +108,7 @@ router.get("/profile", async (req, res) => {
     }
 });
 // delete user
-router.delete("/delete", async (req, res) => {
+router.delete("/delete", protect, async (req, res) => {
     const token = req.cookies.token;
     if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
