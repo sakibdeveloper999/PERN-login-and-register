@@ -106,3 +106,19 @@ router.get("/profile", async (req, res) => {
         return res.status(500).json({ message: "Server error" });
     }
 });
+// delete user
+router.delete("/delete", async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }   
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        await pool.query("DELETE FROM users WHERE id = $1", [decoded.id]);
+        res.clearCookie("token", cookiesOptions);
+        return res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+});
