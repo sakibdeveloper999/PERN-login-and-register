@@ -17,9 +17,41 @@ const cookiesOptions = {
 };
 
 // generate JWT token
-const generateToken = (id)=>{
-    return jwt.sign({id}, process.env.SECRET_KEY, {
+const generateToken = (id) => {
+    return jwt.sign({ id }, process.env.SECRET_KEY, {
         expiresIn: "30d"
     });
 };
 
+// Register user
+
+router.post("/register", async (req, res) => {
+    const { name, email, password } = req.body;
+    try {
+        // Check fields
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: "Please fill all the fields" });
+        }
+        // Check if user exists
+        const userExists = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+        if (userExists.rows.length > 0) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+        // Insert user into database
+        const newUser = await pool.query(
+            "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email",
+            [name, email, hashedPassword]
+        );
+        // Generate token
+        const token = generateToken(newUser.rows[0].id);
+        // Set cookie
+        res.cookie("token", token, cookiesOptions);
+        return res.status(201).json({ message: "User registered successfully, User name: " + newUser.rows[0].name });
+        
+    } catch (error) {
+        console.error("Error registering user:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+});
