@@ -49,7 +49,7 @@ router.post("/register", async (req, res) => {
         // Set cookie
         res.cookie("token", token, cookiesOptions);
         return res.status(201).json({ message: "User registered successfully, User name: " + newUser.rows[0].name });
-        
+
     } catch (error) {
         console.error("Error registering user:", error);
         return res.status(500).json({ message: "Server error" });
@@ -91,3 +91,18 @@ router.post("/logout", (req, res) => {
     return res.status(200).json({ message: "User logged out successfully" });
 });
 
+// Get user profile
+router.get("/profile", async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const user = await pool.query("SELECT id, name, email FROM users WHERE id = $1", [decoded.id]);
+        return res.status(200).json({ user: user.rows[0] });
+    } catch (error) {
+        console.error("Error fetching user profile:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+});
