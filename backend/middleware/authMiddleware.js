@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import pool from "../config/db.js";
+import pool from "..//config/bd.js";
 
 dotenv.config();
 const protect = async (req, res, next) => {
