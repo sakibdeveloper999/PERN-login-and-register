@@ -55,3 +55,33 @@ router.post("/register", async (req, res) => {
         return res.status(500).json({ message: "Server error" });
     }
 });
+
+// Login user
+
+router.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        // Check fields
+        if (!email || !password) {
+            return res.status(400).json({ message: "Please fill all the fields" });
+        }
+        // Check if user exists
+        const userExists = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+        if (userExists.rows.length === 0) {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
+        // Check password
+        const isMatch = await bcrypt.compare(password, userExists.rows[0].password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
+        // Generate token
+        const token = generateToken(userExists.rows[0].id);
+        // Set cookie
+        res.cookie("token", token, cookiesOptions);
+        return res.status(200).json({ message: "User logged in successfully, User name: " + userExists.rows[0].name });
+    } catch (error) {
+        console.error("Error logging in user:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+});
