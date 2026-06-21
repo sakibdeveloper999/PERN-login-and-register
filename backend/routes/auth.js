@@ -85,3 +85,9 @@ router.post("/login", async (req, res) => {
         return res.status(500).json({ message: "Server error" });
     }
 });
+// Logout user
+router.post("/logout", (req, res) => {
+    res.clearCookie("token", cookiesOptions);
+    return res.status(200).json({ message: "User logged out successfully" });
+});
+
