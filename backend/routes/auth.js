@@ -101,7 +101,7 @@ router.get("/profile", protect, async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
         const user = await pool.query("SELECT id, name, email FROM users WHERE id = $1", [decoded.id]);
-        return res.status(200).json({ user: user.rows[0] });
+        return res.status(200).json({   name: user.rows[0].name, email: user.rows[0].email });
     } catch (error) {
         console.error("Error fetching user profile:", error);
         return res.status(500).json({ message: "Server error" });
