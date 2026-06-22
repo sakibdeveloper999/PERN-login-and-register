@@ -17,7 +17,7 @@ const App = () => {
   useEffect(()=>{
     const fetchUser = async () => {
       try {
-        const res = await axios.get("localhost:5000/api/auth/profile")
+        const res = await axios.get("http://localhost:5000/api/auth/profile")
         setUser(res.data);
       } catch (error) {
         setUser(null);
@@ -37,9 +37,9 @@ const App = () => {
 
   return (
     <Router>
-      <Navbar />
+      <Navbar user={user} />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={user ? <Home user={user} /> : <Navigate to="/login" />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/register" element={<Register setUser={setUser} />} />
       </Routes>
