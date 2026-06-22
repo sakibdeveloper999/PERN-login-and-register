@@ -11,7 +11,6 @@ axios.defaults.withCredentials = true;
 const App = () => {
 
   const [user, setUser] = useState(null);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
   // Fetch user profile on app load
@@ -20,10 +19,9 @@ const App = () => {
       try {
         const res = await axios.get("localhost:5000/api/auth/profile")
         setUser(res.data);
-      } catch (err) {
-        setError("Failed to fetch user");
+      } catch (error) {
         setUser(null);
-        console.error(err);
+        console.log(error);
       } finally {
         setLoading(false);
       }
@@ -42,7 +40,7 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login/>} />
+        <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/register" element={<Register/>} />
       </Routes>
     </Router>
