@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-hot-toast';
 
 const Login = ({ setUser }) => {
     const [form, setForm] = useState({
@@ -13,13 +14,14 @@ const Login = ({ setUser }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("FORM SUBMITTED");
         try {
             const res = await axios.post("http://localhost:5000/api/auth/login", form);
             setUser(res.data);
+            toast.success("Login successful!");
             navigate("/");
         } catch (error) {
             setError("Invalid email or password");
+            toast.error("Login failed. Please check your credentials.");
             console.error("Login error:", error);
         }
     };

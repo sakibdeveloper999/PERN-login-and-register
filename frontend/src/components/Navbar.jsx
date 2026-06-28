@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-hot-toast';
 
 const Navbar = ({ user }) => {
   const navigate = useNavigate();
@@ -8,15 +9,16 @@ const Navbar = ({ user }) => {
   const handleLogout = async () => {
     try {
       setLoading(true);
-
       await fetch("http://localhost:5000/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });
+      
 
       window.location.href = "/login";
     } catch (error) {
       console.error("Logout error:", error);
+      toast.error("Logout failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -26,6 +28,7 @@ const Navbar = ({ user }) => {
     const confirmLogout = window.confirm("Are you sure you want to logout?");
     if (confirmLogout) {
       handleLogout();
+      toast.success("Logout successful!");
     }
   };
 

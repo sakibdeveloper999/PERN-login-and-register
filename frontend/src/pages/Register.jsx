@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-hot-toast';
 
 const Register = ({ setUser }) => {
     const [form, setForm] = useState({
@@ -20,11 +21,12 @@ const Register = ({ setUser }) => {
                 "http://localhost:5000/api/auth/register",
                 form
             );
-
             setUser(res.data);
-            navigate("/");
+            toast.success("Registration successful!");
+            navigate("/", { replace: true });
         } catch (error) {
             setError("Registration failed");
+            toast.error("Registration failed. Please try again.");
             console.error("Register error:", error);
         }
     };
