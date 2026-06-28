@@ -40,8 +40,8 @@ const App = () => {
       <Navbar user={user} />
       <Routes>
         <Route path="/" element={user ? <Home user={user} /> : <Navigate to="/login" />} />
-        <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/register" element={<Register setUser={setUser} />} />
+        <Route path="/login" element={!user ? <Login setUser={setUser} /> : <Navigate to="/" /> } />
+        <Route path="/register" element={!user ? <Register setUser={setUser} /> : <Navigate to="/" /> } />
       </Routes>
     </Router>
   )
