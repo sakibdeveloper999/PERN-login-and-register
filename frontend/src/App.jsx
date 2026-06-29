@@ -7,6 +7,8 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Loader from "./components/Loader";
+
 
 axios.defaults.baseURL = "http://localhost:5000";
 axios.defaults.withCredentials = true;
@@ -23,7 +25,7 @@ const App = () => {
       } catch (error) {
         setUser(null);
         console.error(error);
-        toast.error("Failed to find your profile! please login.");
+        toast.error("You are not logged in, please login!");
         setLoading(true);
       } finally {
         setLoading(false);
@@ -33,9 +35,9 @@ const App = () => {
     fetchUser();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+if (loading) {
+  return <Loader />;
+}
 
   return (
     <>
