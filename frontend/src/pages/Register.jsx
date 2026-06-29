@@ -3,6 +3,30 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast';
 
+
+// Email suggestions for common typos
+    const emailSuggestions = {
+    "gmai.com": "gmail.com",
+    "gmial.com": "gmail.com",
+    "gmail.con": "gmail.com",
+    "gmail.co": "gmail.com",
+    "hotnail.com": "hotmail.com",
+    "hotmai.com": "hotmail.com",
+    "yaho.com": "yahoo.com",
+    "outlok.com": "outlook.com",
+    };
+
+    // Function to get suggested email based on common typos
+    const getSuggestedEmail = (email) => {
+    const [username, domain] = email.split("@");
+
+    if (!domain) return null;
+
+    return emailSuggestions[domain]
+        ? `${username}@${emailSuggestions[domain]}`
+        : null;
+    };
+//----------------------------
 const Register = ({ setUser }) => {
     const [form, setForm] = useState({
         name: "",
@@ -16,6 +40,12 @@ const Register = ({ setUser }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Check for email suggestions before proceeding
+        const suggestion = getSuggestedEmail(form.email);
+        if (suggestion) {
+            toast.error(`Did you mean ${suggestion}?`);
+            return;
+        }
         // Create the promise
         const registerPromise= axios.post(
             "http://localhost:5000/api/auth/register",
