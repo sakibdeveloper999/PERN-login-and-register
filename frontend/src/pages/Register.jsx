@@ -16,17 +16,25 @@ const Register = ({ setUser }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
-            const res = await axios.post(
-                "http://localhost:5000/api/auth/register",
+        // Create the promise
+        const registerPromise= axios.post(
+            "http://localhost:5000/api/auth/register",
                 form
-            );
+        );
+
+        // Show loading, success and error toast
+        toast.promise(registerPromise, {
+            loading: "Registering...",
+            success: "Registration successful!",
+            error: (err) => err.response?.data?.message || "Registration failed"
+        });
+
+        try {
+            const res = await registerPromise;
             setUser(res.data);
-            toast.success("Registration successful!");
             navigate("/", { replace: true });
         } catch (error) {
             setError("Registration failed");
-            toast.error("Registration failed. Please try again.");
             console.error("Register error:", error);
         }
     };
